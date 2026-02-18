@@ -1,0 +1,71 @@
+trainer:
+  nnodes: 1
+  n_gpus_per_node: 4
+
+data:
+  ability: "math"
+  dataset_path: ~/data/rlhf/math/hendrycks_math  # Path to base dataset (MATH or GSM8K)
+  template_tokenizer: null  # If null, uses model tokenizer
+  num_responses: 16  # Number of responses to generate per problem
+  output_dir: ~/data/rlhf/math/offline_dataset  # Output directory for processed dataset
+  batch_size: 32
+  trust_remote_code: false
+  include_chat_template: true  # Whether to include chat template in prompts during generation
+  # Filtering options
+  filter_all_correct: false  # Filter out problems where all responses are correct
+  filter_all_incorrect: false  # Filter out problems where all responses are incorrect
+  filter_correct_thresholds: "1"  # Comma-separated values for minimum correct responses
+  filter_incorrect_thresholds: "1"  # Comma-separated values for minimum incorrect responses
+  save_response_logprob: false  # Whether to save response log probabilities (not yet implemented in parallel version)
+  num_samples: null  # If set, limits the number of samples to process
+  seed: 42
+
+model:
+  path: ~/models/Qwen2-7B-Instruct
+  external_lib: null
+
+rollout:
+  name: vllm
+  mode: sync  # sync: LLM, async: AsyncLLM
+  temperature: 0.6
+  top_k: -1  # 0 for hf rollout, -1 for vllm rollout
+  top_p: 0.95
+  prompt_length: 1536
+  response_length: 3584  # max_tokens for generation
+  # for vllm rollout
+  dtype: bfloat16  # should align with FSDP
+  gpu_memory_utilization: 0.9
+  ignore_eos: False
+  enforce_eager: True
+  free_cache_engine: True
+  load_format: dummy_dtensor
+  tensor_model_parallel_size: 1
+  max_num_batched_tokens: 132000
+  max_model_len: null
+  max_num_seqs: 1024
+  log_prob_micro_batch_size: null  # will be deprecated, use log_prob_micro_batch_size_per_gpu
+  log_prob_micro_batch_size_per_gpu: 8
+  # for fire vllm rollout
+  use_fire_sampling: False  # enable FIRE https://arxiv.org/abs/2410.21236
+  # for hf rollout
+  do_sample: True
+  disable_log_stats: True
+  enable_chunked_prefill: True
+  n: 1
+  use_tqdm: False
+  seed: 0
+
+actor:
+  strategy: fsdp  # This is for backward-compatibility
+  ulysses_sequence_parallel_size: 1  # sp size
+  entropy_from_logits_with_chunking: False  # calculate entropy with chunking to reduce memory peak
+  entropy_checkpointing: False  # recompute entropy
+  fsdp_config:
+    fsdp_size: -1
+    forward_prefetch: False  # FSDP1 forward_prefetch configuration
+
+ray_init:
+  num_cpus: null # `None` means using all CPUs, which might cause hang if limited in systems like SLURM. Please set to a number allowed then.
+  timeline_json_file: null
+  temp_dir: /tmp/ray_gen_tmp
+  address: null
