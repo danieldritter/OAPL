@@ -5,7 +5,7 @@
 
 <div align="center">
 
-[![Github](https://img.shields.io/badge/Repo-000000?style=for-the-badge&logo=github&logoColor=000&logoColor=white)](https://github.com/danielritter/OAPL)
+[![Github](https://img.shields.io/badge/Repo-000000?style=for-the-badge&logo=github&logoColor=000&logoColor=white)](https://github.com/danieldritter/OAPL)
 [![arXiv](https://img.shields.io/badge/Paper-red?style=for-the-badge&logo=arXiv&logoColor=white&labelColor)](TBD)
 [![Hugging Face Collection](https://img.shields.io/badge/Dataset/Models-fcd022?style=for-the-badge&logo=huggingface&logoColor=000&labelColor)](https://huggingface.co/collections/danieldritter/oapl)
 
